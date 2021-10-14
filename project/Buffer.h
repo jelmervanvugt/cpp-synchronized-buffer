@@ -132,6 +132,7 @@ public:
     /*
       A thread can only unbind the buffer if:
         - There are no current modifications executing
+        - Buffer had a bound
   */
     void unbind(int threadId)
     {
@@ -156,6 +157,7 @@ public:
     /*
   A thread can only bind the buffer if:
     - There are no current modifications executing
+    - Buffer has no bound
 */
     void bind(unsigned long int bound, int threadId)
     {
@@ -163,7 +165,7 @@ public:
 
         if (bound < buffer.size() || bound < 0)
         {
-            std::string errmsg = "Error occured while trying to set bound " + std::to_string(bound) + ". Bound cannot be negative or greater than bufferSize.";
+            std::string errmsg = "Error occured while trying to set bound " + std::to_string(bound) + ". Bound cannot be negative or lesser than bufferSize.";
             logger.push_back(errmsg);
             throw BufferBoundException(errmsg.c_str());
         }
@@ -182,7 +184,7 @@ public:
     A thread can only get buffer size if:
     - There are no current modifictions executing
     */
-    unsigned long int bind(int threadId)
+    unsigned long int getBufferSize(int threadId)
     {
         openMod();
 
