@@ -137,7 +137,72 @@ When threads execute a modifying operation both locks that are acquired in the p
 To prevent starvation from occuring while using the buffer a couple of measures have been taken. The first one being the fact that readers are able to execute concurrently. Minimizing the time reading threads have to wait for each other. To ensure modifying threads are also able to execute without suffering from starvation this type of thread is given priority over reading threads. This way both types of threads are able to execute their tasks without suffering from starvation. 
 
 # Testing
-WIP
+To ensure the correct functionality of the implemented buffer below a few test cases are defined. These test cases could be implemented by future developers.
+
+The test cases below all assume the buffer is executed in a multi-threaded environment. Tests for a single-threaded environment are not defined. This is because when the buffer works correctly when used by multiple threads the same goes for a single thread.
+
+<table>
+    <tr>
+        <th>n</th>
+        <th>Test description</th>
+        <th>Expected output</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Five threads try to simultaneously increment the same element (assuming the element is a numeric) in the buffer by 10.</td>
+        <td>The original value of the element should be increased by 50 and the logging should be maintained correctly.</td>
+    </tr>
+     <tr>
+        <td>2</td>
+        <td>Two threads try to simultaneously remove the same element on the buffer.</td>
+        <td>After execution of the first thread the element should be removed. After the execution of the second thread an `BufferOutOfBounds` exception should be thrown and there should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>3</td>
+        <td>Two threads try to simultaneously set a bound of 10 on an unbounded buffer.</td>
+        <td>After execution of the first thread a bound of 10 is set on the buffer. After execution of the second thread an `BufferBoundException` should be thrown, since the buffer already has a bound. There should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+      <td>4</td>
+        <td>Two threads try to simultaneously remove the bound on a bounded buffer.</td>
+        <td>After execution of the first thread the bound on the buffer should be removed. After execution of the second thread an `BufferBoundException` should be thrown, since the buffer has no bound. There should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>5</td>
+        <td>A thread tries to read an item with an index that is either negative or greater than the buffersize.</td>
+        <td>An `BufferOutOfBoundsException` is thrown since the buffer has no element associated with this index. There should also be an entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>6</td>
+        <td>A thread tries to write an item to an index that is either negative or greater than the buffersize.</td>
+        <td>An `BufferOutOfBoundsException` is thrown since the buffer has no such index. There should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>7</td>
+        <td>A thread tries to remove an item from an index that is either negative or greater than the buffersize.</td>
+        <td>An `BufferOutOfBoundsException` is thrown since the buffer has no such index. There should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>8</td>
+        <td>A thread tries to add a bound to the buffer that is negative either negative or lesser than the current buffersize.</td>
+        <td>An `BufferOutOfBoundsException` is thrown since the buffer does not allow such bounds. There should also be a new entry in the logger.</td>
+    </tr>
+     <tr>
+        <td>9</td>
+        <td>A thread tries to add a bound to the buffer that is negative either negative or lesser than the current buffersize.</td>
+        <td>An `BufferOutOfBoundsException` is thrown since the buffer does not allow such bounds. There should also be a new entry in the logger.</td>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td>A thread tries to alter the bound with either `bind()` or `unbind()` while there are modification threads active.</td>
+        <td>Given the argument for the `bind()` and other threads function is valid, all actions complete successfully. The logging has also been maintained correctly.</td>
+    </tr>
+    <tr>
+        <td>11</td>
+        <td>Multiple threads try to simultaneously perform either a reading or writing operation on the buffer.</td>
+        <td>Given all arguments given to the functions are valid; all threads should complete successfully. The logging should also have been correctly maintained.</td>
+    </tr>
+</table>
 
 
 
